@@ -1,8 +1,8 @@
 """Phase 2 contract tests for the nanobind low-level module (``trexio.pytrexio``).
 
 Pins the canonical low-level ABI (Plan README):
-  * returns are **Python lists**, C return value **first**, then outputs in
-    argument order;
+  * multi-output returns are **Python lists**, C return value **first**, then
+    outputs in argument order; sparse output buffers are NumPy arrays;
   * ``trexio_open`` -> plain **int** rc on failure, else ``[handle, rc]``;
   * the handle exposes a readable ``back_end``;
   * ``trexio_string_of_error`` -> **str**;

@@ -20,8 +20,10 @@ Inputs (one source of truth per concern, never duplicated):
   * third_party/trex.json         -- per-variable kinds/dims (semantic
                                      cross-check, and the {dims} rule for the safe
                                      array wrappers).
-  * api/trexio_gen.py (the golden, task-1 verbatim copy)  -- the byte oracle for
-                                     emission order and the exact wrapper bodies.
+  * api/trexio_gen.py (the golden, task-1 copy) -- the byte oracle for emission
+                                     order and wrapper bodies. Sparse writers
+                                     are normalized by this generator so their
+                                     arrays can be passed directly to nanobind.
                                      The shared model + required_api.names above
                                      are used to *derive and verify* each wrapper's
                                      family/C-symbol; the golden supplies the bytes
@@ -71,7 +73,7 @@ from trexio_api_model import SKIP, parse_protos, classify, FAMILIES
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 # ---------------------------------------------------------------------------
-# Per-name body overrides. INTENTIONALLY EMPTY: there are no special cases.
+# Per-name body overrides. INTENTIONALLY EMPTY: there are no per-name cases.
 # In particular `write_basis_r_power` is the STANDARD int64 SAFE_ARRAY_W writer
 # (same list/tuple branch as every other int64 array, references/20 +
 # references/30 (b)); there is deliberately no forced-flatten entry here.
@@ -180,6 +182,54 @@ def replace_leading_banner(src):
     return "".join(banner + lines[i:])
 
 
+def normalize_sparse_writers(src, funcs, resolved):
+    """Emit contiguous 1-D arrays for typed, zero-copy sparse C++ bindings.
+
+    The public API continues to accept lists, tuples, and ndarrays. Correctly
+    typed C-contiguous ndarrays become views; other inputs are converted once.
+    Replacing the old branch matrix here keeps the generated surface
+    deterministic and makes this transformation apply to every sparse writer.
+    """
+    lines = src.splitlines(keepends=True)
+    edits = []
+    for node in funcs:
+        family, symbol = resolved[node.name]
+        if family != "SPARSE_W":
+            continue
+
+        start = None
+        stop = None
+        for i in range(node.lineno - 1, node.end_lineno):
+            stripped = lines[i].strip()
+            if stripped in {
+                "convertIndices = False",
+                "indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)",
+            }:
+                start = i
+            if stripped == "if rc != TREXIO_SUCCESS:":
+                stop = i
+                break
+        if start is None or stop is None or start >= stop:
+            raise Todo(node.name, "could not locate sparse-array normalization block")
+        marker = "# Keep already compatible ndarrays zero-copy; convert other inputs once."
+        while start > node.lineno - 1 and lines[start - 1].strip() == marker:
+            start -= 1
+
+        replacement = [
+            f"    {marker}\n",
+            "    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)\n",
+            "    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)\n",
+            "\n",
+            f"    rc = pytr.{symbol}(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)\n",
+            "\n",
+        ]
+        edits.append((start, stop, replacement))
+
+    for start, stop, replacement in reversed(edits):
+        lines[start:stop] = replacement
+    return "".join(lines)
+
+
 def gen(names_path, json_path, header_path, golden_path, out_path):
     required = list(load_required(names_path))
     nameset = set(required)
@@ -193,13 +243,17 @@ def gen(names_path, json_path, header_path, golden_path, out_path):
     golden = pathlib.Path(golden_path).read_text()
     tree = ast.parse(golden)
     funcs = [n for n in tree.body if isinstance(n, ast.FunctionDef)]
+    golden_lines = golden.splitlines(keepends=True)
 
     # ---- verify every top-level function against the shared model + contract --
     fam = {}
     sym2name = {}
+    resolved = {}
     todos = []
     for node in funcs:
-        body = ast.get_source_segment(golden, node)
+        # Slicing by AST line offsets is equivalent here and avoids repeatedly
+        # scanning the complete 34k-line source for every generated function.
+        body = "".join(golden_lines[node.lineno - 1:node.end_lineno])
         try:
             family, symbol = resolve(node.name, body, nameset, protos, data)
         except Todo as t:
@@ -217,6 +271,7 @@ def gen(names_path, json_path, header_path, golden_path, out_path):
         assert node.name not in OVERRIDES or OVERRIDES[node.name] is not None
         fam[family] = fam.get(family, 0) + 1
         sym2name[symbol] = node.name
+        resolved[node.name] = (family, symbol)
 
     # ---- completeness: derived surface must equal required minus the core ----
     core = nameset & set(SKIP)                       # core/skip symbols (incl. get_int64_num, TREXIO_DELIM)
@@ -240,8 +295,9 @@ def gen(names_path, json_path, header_path, golden_path, out_path):
     if todos or missing or extra:
         sys.exit(1)
 
-    # ---- emit: banner (ours) + verbatim everything else (byte-exact bodies) ---
-    out_text = replace_leading_banner(golden)
+    # ---- emit: banner + verified bodies; normalize every sparse writer --------
+    out_text = normalize_sparse_writers(golden, funcs, resolved)
+    out_text = replace_leading_banner(out_text)
     out_path = pathlib.Path(out_path)
     out_path.write_text(out_text)
 

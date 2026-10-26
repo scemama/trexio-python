@@ -28,7 +28,7 @@ needed?"* (It complements `README.md`, which shows the *installed* layout, and
                               |  pytr.trexio_open / read_* / write_* / ...
  +----------------------------v-------------------------------------+
  | import trexio.pytrexio                                            |
- | Low-level C-ABI, Python lists, return code first.                 |
+ | Low-level C-ABI, return code first; sparse buffers are ndarrays. |
  | = src/core.cpp + src/generated_bindings.cpp  ->  pytrexio.<tag>.so|
  |   nanobind — a SWIG-free module that reproduces the old SWIG      |
  |   `pytrexio` ABI, so the wrapper above is unchanged.              |

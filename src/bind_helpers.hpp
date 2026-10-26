@@ -9,12 +9,17 @@
 //
 // cast_vec / vec_list: sequence conversion between Python iterables (list,
 // tuple, or numpy array, including nested / multi-dimensional for drop-in
-// compatibility with the SWIG bindings) and C vectors.
+// compatibility with the SWIG bindings). Sparse arrays bypass these helpers:
+// they use typed nb::ndarray views and capsule-owned NumPy output buffers.
 #include <nanobind/nanobind.h>
+#include <nanobind/ndarray.h>
 #include <nanobind/stl/string.h>
 #include <trexio.h>
 
 #include <cstdint>
+#include <limits>
+#include <memory>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <utility>
@@ -54,6 +59,33 @@ class TrexioHandle {
 };
 
 namespace {
+template <typename T>
+size_t checked_array_size(int64_t size, const char* name) {
+  if (size < 0)
+    throw nb::value_error((std::string(name) + " must be non-negative").c_str());
+
+  const auto usize = static_cast<uint64_t>(size);
+  if (usize > static_cast<uint64_t>(std::numeric_limits<size_t>::max() / sizeof(T)))
+    throw std::overflow_error(std::string(name) + " is too large");
+  return static_cast<size_t>(usize);
+}
+
+template <typename T>
+nb::object owned_numpy_1d(std::unique_ptr<T[]> data, size_t size) {
+  T* ptr = data.get();
+  nb::capsule owner(ptr, [](void* p) noexcept { delete[] static_cast<T*>(p); });
+  data.release();
+  return nb::ndarray<nb::numpy, T, nb::ndim<1>, nb::c_contig, nb::device::cpu>(
+             ptr, {size}, owner)
+      .cast();
+}
+
+inline int64_t checked_ndarray_size(size_t size, const char* name) {
+  if (size > static_cast<size_t>(std::numeric_limits<int64_t>::max()))
+    throw std::overflow_error(std::string(name) + " is too large");
+  return static_cast<int64_t>(size);
+}
+
 // Recursively flatten an iterable of Python scalars into a C vector of T.
 // Nested lists / multi-dimensional numpy arrays are supported (the SWIG
 // bindings flattened them too).

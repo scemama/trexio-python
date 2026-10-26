@@ -88,8 +88,10 @@ rc = trexio_write_mo_num(test_file, 600)
 assert rc==0
 
 num_integrals = 100
-indices = [i for i in range(num_integrals*4)]
-values  = [(3.14 + float(i)) for i in range(num_integrals)]
+# Sparse low-level bindings accept the exact C-compatible NumPy layouts. The
+# public trexio.write_* wrappers still normalize lists and other array layouts.
+indices = np.arange(num_integrals * 4, dtype=np.int32)
+values = np.arange(num_integrals, dtype=np.float64) + 3.14
 
 rc = trexio_write_safe_mo_2e_int_eri(test_file, 0, num_integrals, indices, values)
 assert rc==0

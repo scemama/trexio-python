@@ -1735,60 +1735,100 @@ m.def("trexio_read_rdm_2e_upup_size", [](TrexioHandle* h) -> nb::object {
   nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(s)); return l;
 }, nb::arg("handle"));
 m.def("trexio_read_safe_amplitude_double", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_double(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_double(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_amplitude_double_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_double_exp(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_double_exp(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_amplitude_quadruple", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_quadruple(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_quadruple(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_amplitude_quadruple_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_quadruple_exp(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_quadruple_exp(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_amplitude_single", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_single(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_single(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_amplitude_single_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_single_exp(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_single_exp(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_amplitude_triple", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_triple(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_triple(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_amplitude_triple_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_triple_exp(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_amplitude_triple_exp(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_ao_1e_int_core_hamiltonian_64", [](TrexioHandle* h, int64_t dim) -> nb::object {
   std::vector<double> v(static_cast<size_t>(dim < 0 ? 0 : dim), {});
@@ -1871,32 +1911,52 @@ m.def("trexio_read_safe_ao_1e_int_potential_n_e_im_64", [](TrexioHandle* h, int6
   nb::list l; l.append(nb::int_(rc)); l.append(vec_list(v)); return l;
 }, nb::arg("handle"), nb::arg("dim"));
 m.def("trexio_read_safe_ao_2e_int_eri", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_ao_2e_int_eri(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_ao_2e_int_eri(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_ao_2e_int_eri_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_ao_2e_int_eri_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_ao_2e_int_eri_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_ao_2e_int_eri_lr", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_ao_2e_int_eri_lr(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_ao_2e_int_eri_lr(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_ao_2e_int_eri_lr_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_ao_2e_int_eri_lr_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_ao_2e_int_eri_lr_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_ao_cartesian_shell_64", [](TrexioHandle* h, int64_t dim) -> nb::object {
   std::vector<int64_t> v(static_cast<size_t>(dim < 0 ? 0 : dim), {});
@@ -2285,11 +2345,16 @@ m.def("trexio_read_safe_csf_coefficient", [](TrexioHandle* h, int64_t offset, in
   nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(v)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("dim"));
 m.def("trexio_read_safe_csf_det_coefficient", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_csf_det_coefficient(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_csf_det_coefficient(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_densityfit_coefficient_64", [](TrexioHandle* h, int64_t dim) -> nb::object {
   std::vector<double> v(static_cast<size_t>(dim < 0 ? 0 : dim), {});
@@ -2489,32 +2554,52 @@ m.def("trexio_read_safe_mo_1e_int_potential_n_e_im_64", [](TrexioHandle* h, int6
   nb::list l; l.append(nb::int_(rc)); l.append(vec_list(v)); return l;
 }, nb::arg("handle"), nb::arg("dim"));
 m.def("trexio_read_safe_mo_2e_int_eri", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_mo_2e_int_eri(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_mo_2e_int_eri(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_mo_2e_int_eri_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_mo_2e_int_eri_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_mo_2e_int_eri_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_mo_2e_int_eri_lr", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_mo_2e_int_eri_lr(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_mo_2e_int_eri_lr(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_mo_2e_int_eri_lr_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_mo_2e_int_eri_lr_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_mo_2e_int_eri_lr_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_mo_coefficient_64", [](TrexioHandle* h, int64_t dim) -> nb::object {
   std::vector<double> v(static_cast<size_t>(dim < 0 ? 0 : dim), {});
@@ -2607,67 +2692,112 @@ m.def("trexio_read_safe_rdm_1e_up_64", [](TrexioHandle* h, int64_t dim) -> nb::o
   nb::list l; l.append(nb::int_(rc)); l.append(vec_list(v)); return l;
 }, nb::arg("handle"), nb::arg("dim"));
 m.def("trexio_read_safe_rdm_2e", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_rdm_2e_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_rdm_2e_dndn", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_dndn(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_dndn(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_rdm_2e_dndn_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_dndn_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_dndn_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_rdm_2e_transition", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_transition(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_transition(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_rdm_2e_updn", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_updn(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_updn(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_rdm_2e_updn_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_updn_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_updn_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_rdm_2e_upup", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_upup(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_upup(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_safe_rdm_2e_upup_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");
+  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");
   int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one
-  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);
-  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);
-  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_upup_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);
-  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;
+  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");
+  const size_t vv_size = checked_array_size<double>(size_value, "size_value");
+  auto ix = std::make_unique<int32_t[]>(ix_size);
+  auto vv = std::make_unique<double[]>(vv_size);
+  int rc = (h && h->open()) ? static_cast<int>(trexio_read_safe_rdm_2e_upup_cholesky(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);
+  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));
 m.def("trexio_read_state_current_label", [](TrexioHandle* h, int32_t max_str_len) -> nb::object {
   int32_t mlen = max_str_len > 0 ? max_str_len : 256;
@@ -3048,54 +3178,78 @@ m.def("trexio_write_rdm_2e_upup_cholesky_num", [](TrexioHandle* h, int32_t v) ->
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
   return static_cast<int>(trexio_write_rdm_2e_upup_cholesky_num(h->raw(), v));
 }, nb::arg("handle"), nb::arg("value"));
-m.def("trexio_write_safe_amplitude_double", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+m.def("trexio_write_safe_amplitude_double", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_amplitude_double(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_amplitude_double_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_amplitude_double(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_amplitude_double_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_amplitude_double_exp(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_amplitude_quadruple", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_amplitude_double_exp(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_amplitude_quadruple", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_amplitude_quadruple(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_amplitude_quadruple_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_amplitude_quadruple(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_amplitude_quadruple_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_amplitude_quadruple_exp(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_amplitude_single", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_amplitude_quadruple_exp(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_amplitude_single", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_amplitude_single(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_amplitude_single_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_amplitude_single(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_amplitude_single_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_amplitude_single_exp(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_amplitude_triple", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_amplitude_single_exp(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_amplitude_triple", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_amplitude_triple(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_amplitude_triple_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_amplitude_triple(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_amplitude_triple_exp", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_amplitude_triple_exp(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_amplitude_triple_exp(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
 m.def("trexio_write_safe_ao_1e_int_core_hamiltonian_64", [](TrexioHandle* h, const nb::object& a) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
   std::vector<double> v = cast_vec<double>(a);
@@ -3176,30 +3330,42 @@ m.def("trexio_write_safe_ao_1e_int_potential_n_e_im_64", [](TrexioHandle* h, con
   std::vector<double> v = cast_vec<double>(a);
   return static_cast<int>(trexio_write_safe_ao_1e_int_potential_n_e_im_64(h->raw(), v.data(), static_cast<int64_t>(v.size())));
 }, nb::arg("handle"), nb::arg("data"));
-m.def("trexio_write_safe_ao_2e_int_eri", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+m.def("trexio_write_safe_ao_2e_int_eri", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_ao_2e_int_eri(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_ao_2e_int_eri_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_ao_2e_int_eri(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_ao_2e_int_eri_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_ao_2e_int_eri_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_ao_2e_int_eri_lr", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_ao_2e_int_eri_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_ao_2e_int_eri_lr", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_ao_2e_int_eri_lr(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_ao_2e_int_eri_lr_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_ao_2e_int_eri_lr(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_ao_2e_int_eri_lr_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_ao_2e_int_eri_lr_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_ao_2e_int_eri_lr_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
 m.def("trexio_write_safe_ao_cartesian_shell_64", [](TrexioHandle* h, const nb::object& a) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
   std::vector<int64_t> v = cast_vec<int64_t>(a);
@@ -3585,12 +3751,15 @@ m.def("trexio_write_safe_csf_coefficient", [](TrexioHandle* h, int64_t offset, i
   std::vector<double> v = cast_vec<double>(a);
   return static_cast<int>(trexio_write_safe_csf_coefficient(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), v.data(), static_cast<int64_t>(v.size())));
 }, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("data"));
-m.def("trexio_write_safe_csf_det_coefficient", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+m.def("trexio_write_safe_csf_det_coefficient", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_csf_det_coefficient(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_csf_det_coefficient(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
 m.def("trexio_write_safe_densityfit_coefficient_64", [](TrexioHandle* h, const nb::object& a) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
   std::vector<double> v = cast_vec<double>(a);
@@ -3786,30 +3955,42 @@ m.def("trexio_write_safe_mo_1e_int_potential_n_e_im_64", [](TrexioHandle* h, con
   std::vector<double> v = cast_vec<double>(a);
   return static_cast<int>(trexio_write_safe_mo_1e_int_potential_n_e_im_64(h->raw(), v.data(), static_cast<int64_t>(v.size())));
 }, nb::arg("handle"), nb::arg("data"));
-m.def("trexio_write_safe_mo_2e_int_eri", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+m.def("trexio_write_safe_mo_2e_int_eri", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_mo_2e_int_eri(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_mo_2e_int_eri_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_mo_2e_int_eri(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_mo_2e_int_eri_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_mo_2e_int_eri_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_mo_2e_int_eri_lr", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_mo_2e_int_eri_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_mo_2e_int_eri_lr", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_mo_2e_int_eri_lr(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_mo_2e_int_eri_lr_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_mo_2e_int_eri_lr(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_mo_2e_int_eri_lr_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_mo_2e_int_eri_lr_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_mo_2e_int_eri_lr_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
 m.def("trexio_write_safe_mo_coefficient_64", [](TrexioHandle* h, const nb::object& a) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
   std::vector<double> v = cast_vec<double>(a);
@@ -3900,60 +4081,87 @@ m.def("trexio_write_safe_rdm_1e_up_64", [](TrexioHandle* h, const nb::object& a)
   std::vector<double> v = cast_vec<double>(a);
   return static_cast<int>(trexio_write_safe_rdm_1e_up_64(h->raw(), v.data(), static_cast<int64_t>(v.size())));
 }, nb::arg("handle"), nb::arg("data"));
-m.def("trexio_write_safe_rdm_2e", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+m.def("trexio_write_safe_rdm_2e", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_rdm_2e(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_rdm_2e_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_rdm_2e(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_rdm_2e_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_rdm_2e_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_rdm_2e_dndn", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_rdm_2e_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_rdm_2e_dndn", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_rdm_2e_dndn(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_rdm_2e_dndn_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_rdm_2e_dndn(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_rdm_2e_dndn_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_rdm_2e_dndn_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_rdm_2e_transition", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_rdm_2e_dndn_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_rdm_2e_transition", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_rdm_2e_transition(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_rdm_2e_updn", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_rdm_2e_transition(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_rdm_2e_updn", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_rdm_2e_updn(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_rdm_2e_updn_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_rdm_2e_updn(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_rdm_2e_updn_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_rdm_2e_updn_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_rdm_2e_upup", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_rdm_2e_updn_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_rdm_2e_upup", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_rdm_2e_upup(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
-m.def("trexio_write_safe_rdm_2e_upup_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_rdm_2e_upup(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
+m.def("trexio_write_safe_rdm_2e_upup_cholesky", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
-  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);
-  std::vector<double>  d64 = cast_vec<double>(vv);
-  return static_cast<int>(trexio_write_safe_rdm_2e_upup_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));
-}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));
+  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");
+  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");
+  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");
+  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");
+  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");
+  return static_cast<int>(trexio_write_safe_rdm_2e_upup_cholesky(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));
+}, nb::arg("handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());
 m.def("trexio_write_state_current_label", [](TrexioHandle* h, const std::string& s, int32_t max_str_len) -> int {
   if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);
   return static_cast<int>(trexio_write_state_current_label(h->raw(), s.c_str(), max_str_len > 0 ? max_str_len : static_cast<int32_t>(s.size() + 1)));

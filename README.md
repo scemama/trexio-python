@@ -65,13 +65,15 @@ Errors raise `trexio.Error` carrying the TREXIO exit code;
 
 Low-level access (drop-in stand-in for the old SWIG `pytrexio.pytrexio`):
 `import trexio.pytrexio` — same names, same return shapes (Python list with
-the C return code first), same `File` handle object.
+the C return code first), same `File` handle object. Sparse read buffers are
+NumPy arrays backed directly by the C output allocation.
 
 ## What changed vs the SWIG release
 
 - **Nothing user-visible** in the public API: same names, same `File` class,
   same constants, same return shapes (return code first, then results as
-  Python lists — the shapes `api/trexio.py` was written against).
+  Python objects in the shapes `api/trexio.py` was written against). Sparse
+  buffers remain NumPy arrays instead of being expanded into Python lists.
 - The low-level module is one compiled nanobind extension instead of a SWIG
   `.so` plus generated `.py` shims — the `pytrexio` Python shim files are gone
   (parity-verified in `tests/evidence/`).

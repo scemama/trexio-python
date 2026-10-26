@@ -32185,49 +32185,11 @@ def write_ao_2e_int_eri(trexio_file: File, offset_file: int, buffer_size: int, i
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_ao_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32266,49 +32228,11 @@ def write_ao_2e_int_eri_lr(trexio_file: File, offset_file: int, buffer_size: int
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_ao_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32347,49 +32271,11 @@ def write_ao_2e_int_eri_cholesky(trexio_file: File, offset_file: int, buffer_siz
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_ao_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32428,49 +32314,11 @@ def write_ao_2e_int_eri_lr_cholesky(trexio_file: File, offset_file: int, buffer_
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_ao_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_ao_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32509,49 +32357,11 @@ def write_mo_2e_int_eri(trexio_file: File, offset_file: int, buffer_size: int, i
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_mo_2e_int_eri(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32590,49 +32400,11 @@ def write_mo_2e_int_eri_lr(trexio_file: File, offset_file: int, buffer_size: int
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_mo_2e_int_eri_lr(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32671,49 +32443,11 @@ def write_mo_2e_int_eri_cholesky(trexio_file: File, offset_file: int, buffer_siz
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_mo_2e_int_eri_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32752,49 +32486,11 @@ def write_mo_2e_int_eri_lr_cholesky(trexio_file: File, offset_file: int, buffer_
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_mo_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_mo_2e_int_eri_lr_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32833,49 +32529,11 @@ def write_csf_det_coefficient(trexio_file: File, offset_file: int, buffer_size: 
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_csf_det_coefficient(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_csf_det_coefficient(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_csf_det_coefficient(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_csf_det_coefficient(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_csf_det_coefficient(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32914,49 +32572,11 @@ def write_amplitude_single(trexio_file: File, offset_file: int, buffer_size: int
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_single(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_amplitude_single(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_single(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_amplitude_single(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_amplitude_single(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -32995,49 +32615,11 @@ def write_amplitude_single_exp(trexio_file: File, offset_file: int, buffer_size:
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_single_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_amplitude_single_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_single_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_amplitude_single_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_amplitude_single_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33076,49 +32658,11 @@ def write_amplitude_double(trexio_file: File, offset_file: int, buffer_size: int
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_double(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_amplitude_double(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_double(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_amplitude_double(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_amplitude_double(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33157,49 +32701,11 @@ def write_amplitude_double_exp(trexio_file: File, offset_file: int, buffer_size:
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_double_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_amplitude_double_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_double_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_amplitude_double_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_amplitude_double_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33238,49 +32744,11 @@ def write_amplitude_triple(trexio_file: File, offset_file: int, buffer_size: int
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_triple(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_amplitude_triple(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_triple(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_amplitude_triple(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_amplitude_triple(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33319,49 +32787,11 @@ def write_amplitude_triple_exp(trexio_file: File, offset_file: int, buffer_size:
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_triple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_amplitude_triple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_triple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_amplitude_triple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_amplitude_triple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33400,49 +32830,11 @@ def write_amplitude_quadruple(trexio_file: File, offset_file: int, buffer_size: 
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_quadruple(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_amplitude_quadruple(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_quadruple(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_amplitude_quadruple(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_amplitude_quadruple(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33481,49 +32873,11 @@ def write_amplitude_quadruple_exp(trexio_file: File, offset_file: int, buffer_si
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_quadruple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_amplitude_quadruple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_amplitude_quadruple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_amplitude_quadruple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_amplitude_quadruple_exp(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33562,49 +32916,11 @@ def write_rdm_2e(trexio_file: File, offset_file: int, buffer_size: int, indices:
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_rdm_2e(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_rdm_2e(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33643,49 +32959,11 @@ def write_rdm_2e_upup(trexio_file: File, offset_file: int, buffer_size: int, ind
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_upup(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_upup(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_upup(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_rdm_2e_upup(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_rdm_2e_upup(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33724,49 +33002,11 @@ def write_rdm_2e_dndn(trexio_file: File, offset_file: int, buffer_size: int, ind
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_dndn(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_dndn(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_dndn(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_rdm_2e_dndn(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_rdm_2e_dndn(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33805,49 +33045,11 @@ def write_rdm_2e_updn(trexio_file: File, offset_file: int, buffer_size: int, ind
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_updn(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_updn(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_updn(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_rdm_2e_updn(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_rdm_2e_updn(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33886,49 +33088,11 @@ def write_rdm_2e_transition(trexio_file: File, offset_file: int, buffer_size: in
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_transition(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_transition(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_transition(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_rdm_2e_transition(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_rdm_2e_transition(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -33967,49 +33131,11 @@ def write_rdm_2e_cholesky(trexio_file: File, offset_file: int, buffer_size: int,
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_rdm_2e_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_rdm_2e_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -34048,49 +33174,11 @@ def write_rdm_2e_upup_cholesky(trexio_file: File, offset_file: int, buffer_size:
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_upup_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_upup_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_upup_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_rdm_2e_upup_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_rdm_2e_upup_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -34129,49 +33217,11 @@ def write_rdm_2e_dndn_cholesky(trexio_file: File, offset_file: int, buffer_size:
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_dndn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_dndn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_dndn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_rdm_2e_dndn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_rdm_2e_dndn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)
@@ -34210,49 +33260,11 @@ def write_rdm_2e_updn_cholesky(trexio_file: File, offset_file: int, buffer_size:
     if not isinstance(values, (list, tuple, np.ndarray)):
         raise TypeError("values argument has to be an array (list, tuple or NumPy ndarray).")
 
-    convertIndices = False
-    convertValues = False
-    flattenIndices = False
-    if isinstance(indices, np.ndarray):
-       # convert to int32 if input indices are in a different precision
-       if not indices.dtype==np.int32:
-           convertIndices = True
+    # Keep already compatible ndarrays zero-copy; convert other inputs once.
+    indices_32 = np.ascontiguousarray(indices, dtype=np.int32).reshape(-1)
+    values_64 = np.ascontiguousarray(values, dtype=np.float64).reshape(-1)
 
-       if len(indices.shape) > 1:
-           flattenIndices = True
-           if convertIndices:
-               indices_32 = np.int32(indices).flatten()
-           else:
-               indices_32 = np.array(indices, dtype=np.int32).flatten()
-       else:
-           if convertIndices:
-               indices_32 = np.int32(indices)
-    else:
-       # if input array is a multidimensional list or tuple, we have to convert it
-       try:
-           doFlatten = True
-           # if list of indices is flat - the attempt to compute len(indices[0]) will raise a TypeError
-           ncol = len(indices[0])
-           indices_32 = np.array(indices, dtype=np.int32).flatten()
-       except TypeError:
-           doFlatten = False
-           pass
-
-    if isinstance(values, np.ndarray):
-       # convert to float64 if input values are in a different precision
-       if not values.dtype==np.float64:
-           convertValues = True
-       if convertValues:
-           values_64 = np.float64(values)
-
-    if (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_updn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
-    elif (convertIndices or flattenIndices) and not convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_updn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values)
-    elif not (convertIndices or flattenIndices) and convertValues:
-        rc = pytr.trexio_write_safe_rdm_2e_updn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values_64)
-    else:
-        rc = pytr.trexio_write_safe_rdm_2e_updn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices, values)
+    rc = pytr.trexio_write_safe_rdm_2e_updn_cholesky(trexio_file.pytrexio_s, offset_file, buffer_size, indices_32, values_64)
 
     if rc != TREXIO_SUCCESS:
         raise Error(rc)

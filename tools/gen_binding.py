@@ -199,22 +199,30 @@ def e_OFF5_W(r):
 def e_SPARSE_R(r):
     return (
         f'm.def("{r.name}", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, int64_t size_index, int64_t size_value) -> nb::object {{\n'
+        f'  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");\n'
+        f'  if (size_value < buffer_size) throw nb::value_error("size_value must be at least buffer_size");\n'
+        f'  if (buffer_size > 0 && size_index < buffer_size) throw nb::value_error("size_index must be at least buffer_size");\n'
         f'  int64_t n = buffer_size;  // in/out: C reads the requested count, writes the actual one\n'
-        f'  std::vector<int32_t> ix(static_cast<size_t>(size_index < 0 ? 0 : size_index), 0);\n'
-        f'  std::vector<double>  vv(static_cast<size_t>(size_value < 0 ? 0 : size_value), 0.0);\n'
-        f'  int rc = (h && h->open()) ? static_cast<int>({r.name}(h->raw(), static_cast<int64_t>(offset), &n, ix.data(), static_cast<int64_t>(ix.size()), vv.data(), static_cast<int64_t>(vv.size()))) : static_cast<int>(TREXIO_FAILURE);\n'
-        f'  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(vec_list(ix)); l.append(vec_list(vv)); return l;\n'
+        f'  const size_t ix_size = checked_array_size<int32_t>(size_index, "size_index");\n'
+        f'  const size_t vv_size = checked_array_size<double>(size_value, "size_value");\n'
+        f'  auto ix = std::make_unique<int32_t[]>(ix_size);\n'
+        f'  auto vv = std::make_unique<double[]>(vv_size);\n'
+        f'  int rc = (h && h->open()) ? static_cast<int>({r.name}(h->raw(), static_cast<int64_t>(offset), &n, ix.get(), size_index, vv.get(), size_value)) : static_cast<int>(TREXIO_FAILURE);\n'
+        f'  nb::list l; l.append(nb::int_(rc)); l.append(nb::int_(n)); l.append(owned_numpy_1d(std::move(ix), ix_size)); l.append(owned_numpy_1d(std::move(vv), vv_size)); return l;\n'
         + EPI + '"handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("size_index"), nb::arg("size_value"));')
 
 
 def e_SPARSE_W(r):
     return (
-        f'm.def("{r.name}", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::object& ix, const nb::object& vv) -> int {{\n'
+        f'm.def("{r.name}", [](TrexioHandle* h, int64_t offset, int64_t buffer_size, const nb::ndarray<nb::numpy, const int32_t, nb::ndim<1>, nb::c_contig, nb::device::cpu>& ix, const nb::ndarray<nb::numpy, const double, nb::ndim<1>, nb::c_contig, nb::device::cpu>& vv) -> int {{\n'
         f'  if (!h || !h->open()) return static_cast<int>(TREXIO_FAILURE);\n'
-        f'  std::vector<int32_t> i32 = cast_vec<int32_t>(ix);\n'
-        f'  std::vector<double>  d64 = cast_vec<double>(vv);\n'
-        f'  return static_cast<int>({r.name}(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), i32.data(), static_cast<int64_t>(i32.size()), d64.data(), static_cast<int64_t>(d64.size())));\n'
-        + EPI + '"handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices"), nb::arg("values"));')
+        f'  if (buffer_size < 0) throw nb::value_error("buffer_size must be non-negative");\n'
+        f'  const int64_t ix_size = checked_ndarray_size(ix.size(), "indices");\n'
+        f'  const int64_t vv_size = checked_ndarray_size(vv.size(), "values");\n'
+        f'  if (vv_size < buffer_size) throw nb::value_error("values must contain at least buffer_size elements");\n'
+        f'  if (buffer_size > 0 && ix_size < buffer_size) throw nb::value_error("indices must contain at least buffer_size elements");\n'
+        f'  return static_cast<int>({r.name}(h->raw(), static_cast<int64_t>(offset), static_cast<int64_t>(buffer_size), ix.data(), ix_size, vv.data(), vv_size));\n'
+        + EPI + '"handle"), nb::arg("offset"), nb::arg("buffer_size"), nb::arg("indices").noconvert(), nb::arg("values").noconvert());')
 
 
 EMIT = {
