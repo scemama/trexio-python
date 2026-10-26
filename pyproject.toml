@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.9", "nanobind>=2.0", "numpy>=1.22"]
+requires = ["scikit-build-core>=0.9", "nanobind>=3.0", "numpy>=1.22"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -7,7 +7,7 @@ name = "trexio"
 version = "0.1.0"
 description = "Python API of the TREXIO library (nanobind binding)"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = "BSD-3-Clause"
 authors = [{ name = "TREX-CoE" }]
 classifiers = [
@@ -16,7 +16,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Operating System :: POSIX",
 ]
-dependencies = ["numpy>=1.22"]
+dependencies = ["numpy>=1.22", "nanobind-backend>=1.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=7", "pyflakes"]
@@ -29,11 +29,13 @@ Homepage = "https://github.com/TREX-CoE/trexio"
 # TREXIO C library (libtrexio) is a system dependency: install it on the
 # machine. See README "Requirements".
 minimum-version = "0.9"
+cmake.version = ">=3.26"
 build-dir = "build/{wheel_tag}"
 
 [tool.scikit-build.wheel]
 # Layout A: package  ->  site-packages/trexio/{__init__.py, pytrexio.<tag>.so, _version.py}
 packages = ["api/trexio"]
+py-api = "cp310"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

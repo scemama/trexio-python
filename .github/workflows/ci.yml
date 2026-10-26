@@ -56,3 +56,56 @@ jobs:
         with:
           name: wheel-ubuntu
           path: dist/*.whl
+
+  abi3-wheel:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - uses: astral-sh/setup-uv@v6
+      - name: Install system deps (HDF5 + TREXIO build tools)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libhdf5-dev emacs automake autoconf libtool pkg-config
+      - name: Build and install TREXIO from git
+        run: |
+          git clone https://github.com/TREX-CoE/trexio /tmp/trexio
+          cd /tmp/trexio
+          ./autogen.sh
+          ./configure --prefix="$HOME/trexio-install"
+          make -j2
+          make install
+      - name: Build and audit the abi3 wheel
+        run: |
+          python -m pip install -U pip build abi3audit
+          export CMAKE_PREFIX_PATH="$HOME/trexio-install"
+          export PKG_CONFIG_PATH="$HOME/trexio-install/lib/pkgconfig:$HOME/trexio-install/lib64/pkgconfig:${PKG_CONFIG_PATH:-}"
+          python -m build --wheel
+          abi3audit --strict --summary dist/*.whl
+          python - <<'PY'
+          import zipfile
+          from pathlib import Path
+
+          wheels = list(Path("dist").glob("*-cp310-abi3-*.whl"))
+          assert len(wheels) == 1, wheels
+          with zipfile.ZipFile(wheels[0]) as archive:
+              extensions = [name for name in archive.namelist() if name.endswith(".abi3.so")]
+          assert extensions == ["trexio/pytrexio.abi3.so"], extensions
+          print(wheels[0])
+          print(extensions[0])
+          PY
+      - name: Test the same wheel on multiple Python minors
+        run: |
+          export LD_LIBRARY_PATH="$HOME/trexio-install/lib:${LD_LIBRARY_PATH:-}"
+          for python in 3.10 3.12 3.14; do
+            venv="/tmp/trexio-wheel-${python}"
+            uv venv --python "$python" "$venv"
+            uv pip install --python "$venv/bin/python" pytest dist/*.whl
+            "$venv/bin/python" -m pytest tests/ -q --all
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheel-ubuntu-abi3
+          path: dist/*.whl

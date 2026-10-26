@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21...3.30)
+cmake_minimum_required(VERSION 3.26...3.30)
 project(trexio LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -89,11 +89,21 @@ endif()
 # ---------------- nanobind module ---------------------------------------------
 # Layout A (user decision 2026-10-09): the module is installed as
 # site-packages/trexio/pytrexio.<tag>.so, i.e. importable as `trexio.pytrexio`.
-find_package(Python 3.9 COMPONENTS Interpreter Development.Module REQUIRED)
+if(SKBUILD)
+  find_package(Python 3.10 REQUIRED COMPONENTS
+    Interpreter Development.Module ${SKBUILD_SABI_COMPONENT})
+else()
+  find_package(Python 3.10 REQUIRED COMPONENTS
+    Interpreter Development.Module
+    OPTIONAL_COMPONENTS Development.SABIModule)
+endif()
 find_package(nanobind CONFIG REQUIRED)
 # core.cpp = hand-written core (lifecycle/state/NAO/bitfield/delete);
 # generated_bindings.cpp = per-variable has/read/write (tools/gen_binding.py).
-nanobind_add_module(pytrexio src/core.cpp src/generated_bindings.cpp)
+# Split mode keeps the extension on the CPython Stable ABI; the version-specific
+# nanobind backend is supplied by the nanobind-backend runtime dependency.
+nanobind_add_module(pytrexio src/core.cpp src/generated_bindings.cpp
+  BACKEND_MODULE nanobind_backend)
 target_include_directories(pytrexio PRIVATE ${TREXIO_INC})
 target_compile_definitions(pytrexio PRIVATE TREXIO_PKG_VERSION="${TVMAJ}.${TVMIN}.${TVPAT}")
 target_link_libraries(pytrexio PRIVATE ${TREXIO_LIB})

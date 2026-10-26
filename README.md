@@ -17,8 +17,8 @@ trexio/
 
 ## Requirements
 
-- Python ≥ 3.9 (tested on 3.12)
-- A C++17 toolchain and CMake ≥ 3.21 (for building from source)
+- Python ≥ 3.10 (tested on 3.10 and 3.12)
+- A C++17 toolchain and CMake ≥ 3.26 (for building from source)
 - **Installed TREXIO ≥ 2.6** C library (`libtrexio`) with the back ends you use:
   - `module load trexio` (HPC), or a local prefix
     (`./configure --prefix=…; make && make install` from the TREXIO sources),
@@ -40,6 +40,8 @@ default `~/.local`.
 
 At runtime the extension needs to load `libtrexio.so` — export
 `LD_LIBRARY_PATH` / `module load trexio` as you would for any TREXIO client.
+Prebuilt wheels use CPython's 3.10+ Stable ABI and nanobind's split runtime,
+so one wheel per platform works across supported CPython minor versions.
 
 ## Usage (unchanged public API)
 
